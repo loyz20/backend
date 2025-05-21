@@ -6,7 +6,9 @@ import (
 
 	"backend/config"
 	"backend/internal/customer"
+	"backend/internal/order"
 	"backend/internal/product"
+	"backend/internal/sale"
 	"backend/internal/shared"
 	"backend/internal/user"
 
@@ -48,6 +50,8 @@ func main() {
 		product.RegisterRoutes(api, db)
 		user.RegisterRoutes(api, db)
 		customer.RegisterRoutes(api, db)
+		order.RegisterRoutes(api, db)
+		sale.RegisterRoutes(api, db)
 	}
 
 	// Run server

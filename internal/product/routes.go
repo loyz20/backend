@@ -17,5 +17,12 @@ func RegisterRoutes(rg *gin.RouterGroup, db *gorm.DB) {
 		productRoute.GET("/:id", handler.GetByID)
 		productRoute.PUT("/:id", handler.Update)
 		productRoute.DELETE("/:id", handler.Delete)
+		batchRoutes := rg.Group("/products/:id/batches")
+		{
+			batchRoutes.GET("", handler.GetBatchesByProductID)
+			batchRoutes.POST("", handler.CreateBatch)
+			//batchRoutes.PUT("/:batch_id", handler)    // optional
+			//batchRoutes.DELETE("/:batch_id", handler.DeleteBatch) // optional
+		}
 	}
 }

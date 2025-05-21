@@ -11,6 +11,12 @@ type Repository interface {
 	Create(product *Product) error
 	Update(product *Product) error
 	Delete(id uint) error
+
+	FindBatchByID(id uint) (*ProductBatch, error)
+	FindBatchesByProductID(productID uint) ([]ProductBatch, error)
+	CreateBatch(batch *ProductBatch) error
+	UpdateBatch(batch *ProductBatch) error
+	DeleteBatch(id uint) error
 }
 
 type repository struct {
@@ -47,4 +53,32 @@ func (r *repository) Update(product *Product) error {
 
 func (r *repository) Delete(id uint) error {
 	return r.db.Delete(&Product{}, id).Error
+}
+
+// Batch CRUD
+func (r *repository) FindBatchByID(id uint) (*ProductBatch, error) {
+	var batch ProductBatch
+	err := r.db.First(&batch, id).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return &batch, err
+}
+
+func (r *repository) FindBatchesByProductID(productID uint) ([]ProductBatch, error) {
+	var batches []ProductBatch
+	err := r.db.Where("product_id = ?", productID).Find(&batches).Error
+	return batches, err
+}
+
+func (r *repository) CreateBatch(batch *ProductBatch) error {
+	return r.db.Create(batch).Error
+}
+
+func (r *repository) UpdateBatch(batch *ProductBatch) error {
+	return r.db.Save(batch).Error
+}
+
+func (r *repository) DeleteBatch(id uint) error {
+	return r.db.Delete(&ProductBatch{}, id).Error
 }
