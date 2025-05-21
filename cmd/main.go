@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,7 +11,9 @@ import (
 	"backend/internal/product"
 	"backend/internal/sale"
 	"backend/internal/shared"
+	"backend/internal/supplier"
 	"backend/internal/user"
+	"backend/migrations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -29,11 +32,17 @@ func main() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// Auto migrate models (optional dev only)
-	db.AutoMigrate(
-		&product.Product{},
-		&user.User{},
-	)
+	err = migrations.RunAll(db)
+	if err != nil {
+		log.Fatal("Migration error: ", err)
+	}
+
+	err = migrations.Seed(db)
+	if err != nil {
+		log.Fatal("Seeding error: ", err)
+	}
+
+	fmt.Println("Migration & seeding completed.")
 
 	// Initialize Gin router
 	router := gin.Default()
@@ -47,11 +56,17 @@ func main() {
 	// Grouped API routes
 	api := router.Group("/api/v1")
 	{
-		product.RegisterRoutes(api, db)
 		user.RegisterRoutes(api, db)
-		customer.RegisterRoutes(api, db)
-		order.RegisterRoutes(api, db)
-		sale.RegisterRoutes(api, db)
+		auth := router.Group("/api/v1/auth")
+		{
+			auth.Use(shared.JWTAuthMiddleware())
+			product.RegisterRoutes(auth, db)
+			customer.RegisterRoutes(auth, db)
+			supplier.RegisterRoutes(auth, db)
+			order.RegisterRoutes(auth, db)
+			sale.RegisterRoutes(auth, db)
+
+		}
 	}
 
 	// Run server
