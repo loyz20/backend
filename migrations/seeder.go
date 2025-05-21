@@ -2,8 +2,10 @@
 package migrations
 
 import (
+	"log"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
 	"backend/internal/customer"
@@ -18,9 +20,14 @@ import (
 // Seed populates the database with initial data
 func Seed(db *gorm.DB) error {
 	// Users
+	password := "secret123"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("Failed to hash password:", err)
+	}
 	users := []user.User{
-		{Name: "Admin", Email: "admin@example.com", PasswordHash: "$2a$10$hash", Role: "admin"},
-		{Name: "Staff", Email: "staff@example.com", PasswordHash: "$2a$10$hash2", Role: "staff"},
+		{Name: "Admin", Email: "admin@example.com", PasswordHash: string(hashedPassword), Role: "admin"},
+		{Name: "Staff", Email: "staff@example.com", PasswordHash: string(hashedPassword), Role: "staff"},
 	}
 	for _, u := range users {
 		db.FirstOrCreate(&u, user.User{Email: u.Email})
