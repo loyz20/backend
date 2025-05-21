@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"backend/config"
+	"backend/internal/customer"
 	"backend/internal/product"
+	"backend/internal/shared"
 	"backend/internal/user"
 
 	"github.com/gin-gonic/gin"
@@ -34,8 +36,8 @@ func main() {
 	// Initialize Gin router
 	router := gin.Default()
 
-	router.Use(CorsMiddleware())
-	router.Use(Logger())
+	router.Use(shared.CORSMiddleware())
+	router.Use(shared.Logger())
 
 	// Global Middleware
 	// router.Use(AuthMiddleware())
@@ -45,6 +47,7 @@ func main() {
 	{
 		product.RegisterRoutes(api, db)
 		user.RegisterRoutes(api, db)
+		customer.RegisterRoutes(api, db)
 	}
 
 	// Run server
