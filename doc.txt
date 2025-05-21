@@ -1,0 +1,28 @@
+backend/
+│
+├── cmd/                    # Entry point
+│   └── main.go
+│
+├── config/                 # Konfigurasi env, database, dll
+│   └── config.go
+│
+├── internal/               # Bisnis utama
+│   ├── product/            # Modul Produk
+│   │   ├── handler.go
+│   │   ├── usecase.go
+│   │   ├── repository.go
+│   │   └── model.go
+│   ├── customer/           # Modul Customer
+│   ├── order/              # Modul Penjualan & Pembelian
+│   ├── warehouse/          # Modul Gudang
+│   ├── user/               # Modul User & Auth
+│   └── shared/             # Modul utilitas, helper, middleware
+│
+├── pkg/                    # Package eksternal/utilitas internal
+│   └── jwt/
+│   └── response/
+│
+├── migrations/             # File migrasi SQL
+│
+├── go.mod
+└── go.sum
