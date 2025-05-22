@@ -11,18 +11,14 @@ func RegisterRoutes(rg *gin.RouterGroup, db *gorm.DB) {
 	repo := NewRepository(db)
 	uc := NewUseCase(repo)
 	handler := NewHandler(uc)
-
-	users := rg.Group("/auth")
+	rg.POST("/register", handler.Register)
+	rg.POST("/login", handler.Login)
+	users := rg.Group("/auth/users")
 	{
-		users.POST("/register", handler.Register)
-		users.POST("/login", handler.Login)
-		auth := rg.Group("/auth/users")
-		{
-			auth.Use(shared.JWTAuthMiddleware())
-			auth.GET("/", handler.GetAll)
-			auth.GET("/:id", handler.GetByID)
-			auth.PUT("/:id", handler.Update)
-			auth.DELETE("/:id", handler.Delete)
-		}
+		users.Use(shared.JWTAuthMiddleware())
+		users.GET("/", handler.GetAll)
+		users.GET("/:id", handler.GetByID)
+		users.PUT("/:id", handler.Update)
+		users.DELETE("/:id", handler.Delete)
 	}
 }

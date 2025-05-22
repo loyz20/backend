@@ -63,7 +63,14 @@ func (h *Handler) Login(c *gin.Context) {
 		response.Error(c, http.StatusInternalServerError, "failed to generate token")
 		return
 	}
-	response.Success(c, gin.H{"token": token}, "login successful")
+
+	data := gin.H{
+		"user_id": user.ID,
+		"email":   user.Email,
+		"role":    user.Role,
+		"token":   token,
+	}
+	response.Success(c, data, "login successful")
 }
 
 func (h *Handler) GetAll(c *gin.Context) {

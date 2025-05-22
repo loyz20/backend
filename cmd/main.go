@@ -7,6 +7,7 @@ import (
 
 	"backend/config"
 	"backend/internal/customer"
+	"backend/internal/dashboard"
 	"backend/internal/order"
 	"backend/internal/product"
 	"backend/internal/sale"
@@ -65,6 +66,7 @@ func main() {
 			supplier.RegisterRoutes(auth, db)
 			order.RegisterRoutes(auth, db)
 			sale.RegisterRoutes(auth, db)
+			dashboard.RegisterRoutes(auth, db)
 
 		}
 	}
